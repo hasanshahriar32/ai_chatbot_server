@@ -6,11 +6,10 @@ const swaggerJSDocs = YAML.load(path.join(__dirname, "./api.yaml"));
 
 const options = {
   customCss:
-    "img {content:url('https://www.cambridgewireless.co.uk/media/uploads/files/AI-icon.png'); height:50px;}",
+    "img {content:url('https://i.ibb.co/ZfZnZ7y/hstu-logo.png'); height:50px;}",
 
-  customfavIcon:
-    "https://www.cambridgewireless.co.uk/media/uploads/files/AI-icon.png",
-  customSiteTitle: "api docs for neuroNex coders",
+  customfavIcon: "https://i.ibb.co/ZfZnZ7y/hstu-logo.png",
+  customSiteTitle: "api docs for hstu ai chatbot",
   customCssUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css",
 };

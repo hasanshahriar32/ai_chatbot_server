@@ -1,16 +1,14 @@
 openapi: 3.0.0
 info:
-  title: Neuronex API Documentation
+  title: HSTU AI bot API Documentation
   description: Written and tested by [Shahriar Hasan](https://shahriarhasan.vercel.app/).<br /><br /><b> [Visit Site](https://neuronex.vercel.app)</b>
   version: 1.0.0
 servers:
-  - url: https://neuronex-server.onrender.com
+  - url: https://hstu-aichat-server.onrender.com
     description: Internal staging server for testing
-  - url: https://neuronex-server-test.vercel.app
-    description: Internal staging server 2 for testing
   - url: http://localhost:5000
     description: Development Server
-  - url: https://neuronex-server.vercel.app
+  - url: https://hstu-aichat-server.vercel.app
     description: Main working server
 paths:
   /user/user:
