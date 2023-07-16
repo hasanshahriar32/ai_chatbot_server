@@ -1,0 +1,1488 @@
+openapi: 3.0.0
+info:
+  title: Neuronex API Documentation
+  description: Written and tested by [Shahriar Hasan](https://shahriarhasan.vercel.app/).<br /><br /><b> [Visit Site](https://neuronex.vercel.app)</b>
+  version: 1.0.0
+servers:
+  - url: https://neuronex-server.onrender.com
+    description: Internal staging server for testing
+  - url: https://neuronex-server-test.vercel.app
+    description: Internal staging server 2 for testing
+  - url: http://localhost:5000
+    description: Development Server
+  - url: https://neuronex-server.vercel.app
+    description: Main working server
+paths:
+  /user/user:
+    get:
+      tags:
+        - User
+      summary: "Get a list (limit: 10) of users by search "
+      description: Search by email address or name.
+      parameters:
+        - name: search
+          in: query
+          description: "User's email or name"
+          required: true
+          type: string
+      responses:
+        200:
+          description: "Successful operation"
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: "User ID"
+                name:
+                  type: string
+                  description: "User name"
+                email:
+                  type: string
+                  description: "User email"
+
+  /user:
+    post:
+      tags:
+        - User
+      summary: Register user or (if exists) login a user.
+      description: |
+        Request:<br /><br />
+        name (string)<br />
+        email (required, string)<br />
+        uid (required, string)<br />
+        verified (boolean)<br />
+        pic (string)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "hasan"
+                email:
+                  type: string
+                  example: "email@uniqueuser.com"
+                uid:
+                  type: string
+                  example: "UN1QU3u1d"
+                verified:
+                  type: boolean
+                  example: true
+                pic:
+                  type: string
+                  example: "https://e1.pngegg.com/pngimages/444/382/png-clipart-frost-pro-for-os-x-icon-set-now-free-contacts-male-profile.png"
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "201":
+          description: User create success!
+        "422":
+          description: User already exists!
+        "400":
+          description: Invalid user
+
+  paths:
+  /user/{_id}:
+    get:
+      tags:
+        - User
+      summary: Detail info of a single user.
+      description: Return a list of a user's detail info.
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643dd81016971d6822d3cae3"
+      responses:
+        "200":
+          description: OK!
+
+    patch:
+      tags:
+        - User
+      summary: Edit user details.
+      description: |
+        Request:<br /><br />
+        name (string)<br />
+        email (required, string)<br />
+        uid (required, string)<br />
+        verified (boolean)<br />
+        pic (string)
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: The ID of the user to edit.
+          schema:
+            type: string
+            example: "643dd81016971d6822d3cae3"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "hasan"
+                email:
+                  type: string
+                  example: "email@uniqueuser.com"
+                uid:
+                  type: string
+                  example: "UN1QU3u1d"
+                verified:
+                  type: boolean
+                  example: true
+                pic:
+                  type: string
+                  example: "https://e1.pngegg.com/pngimages/444/382/png-clipart-frost-pro-for-os-x-icon-set-now-free-contacts-male-profile.png"
+
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "404":
+          description: User not found!
+        "422":
+          description: Invalid user data!
+
+    delete:
+      tags:
+        - User
+      summary: Delete user.
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: The ID of the user to delete.
+          schema:
+            type: string
+            example: "643dd81016971d6822d3cae3"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "404":
+          description: User not found!
+
+  /user/all:
+    get:
+      tags:
+        - User
+      summary: Get Detail info of all users.
+      description: |
+        <strong>Only admins can access this!<br /><hr /></strong>
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of users per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK!
+        "401":
+          description: Unauthorized!
+    security:
+      - bearerAuth: []
+
+  paths1:
+  /admin:
+    post:
+      tags:
+        - Admin
+      summary: Register admin or (if exists) login a admin.
+      description: |
+        <ul>The requested id should be registered as an user</ul>
+        Request:<br /><br />
+        _id (required, string)<br />
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "643ba76fbcc93dcd0016a44c"
+                adminmakerpass:
+                  type: string
+                  example: ""
+                adminmaker:
+                  type: string
+                  example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "201":
+          description: Admin create success!
+        "422":
+          description: Admin already exists!
+        "400":
+          description: Invalid Admin data or credential!
+        "401":
+          description: Unauthorized!
+  paths2:
+  /admin/all:
+    get:
+      tags:
+        - Admin
+      summary: Get Detail info of all admins.
+      description: |
+        <strong>Only admins can access this!<br /><hr /></strong>
+
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK!
+        "401":
+          description: Unauthorized!
+
+  paths3:
+  /admin/{_id}:
+    get:
+      tags:
+        - Admin
+      summary: Detail info of a single Admin.
+      description: <strong>Only a admin can access this for his own info!<br /><hr /></strong> <br />Return a list of a Admin's detail info.
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK!
+        "401":
+          description: Unauthorized!
+
+    patch:
+      tags:
+        - Admin
+      summary: Edit admin password.
+      description: |
+        <strong>Only a admin can access this for his own pass change!<br /><hr /></strong>
+        Request:<br /><br />
+        currentPassword (required, string)<br />
+        newPassword (required, string)<br />
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: The ID of the admin to edit.
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  example: ""
+                newPassword:
+                  type: string
+                  example: ""
+
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "404":
+          description: Admin not found!
+        "422":
+          description: Invalid Admin data!
+        "401":
+          description: Unauthorized!
+        "400":
+          description: Invalid Credential!
+
+    delete:
+      tags:
+        - Admin
+      summary: Delete Admin.
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: The ID of the Admin to delete.
+          schema:
+            type: string
+            example: "643dd81016971d6822d3cae3"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                adminterminator:
+                  type: string
+                  example: ""
+                adminterminatorpass:
+                  type: string
+                  example: ""
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "404":
+          description: Admin not found!
+        "401":
+          description: Unauthorized!
+        "400":
+          description: Invalid Credential!
+
+  paths4:
+  /admin/user/{_id}:
+    delete:
+      tags:
+        - Admin
+      summary: Delete User.
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          description: The ID of the User to delete.
+          schema:
+            type: string
+            example: "643dd81016971d6822d3cae3"
+
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: The web server is working correctly!
+        "404":
+          description: User not found!
+        "401":
+          description: Unauthorized or The user is an admin! Remove from admin first.
+        "400":
+          description: Invalid Credential!
+
+  paths5:
+  /generate/prompt/{_id}:
+    post:
+      tags:
+        - Generate
+      summary: Generate AI response based on user prompt
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      description: |
+        Request:<br /><br />
+        subjectSelection (string)<br />
+        question (string)<br />
+        sessionId (string)<br />
+        additionalInstruction (string)<br />
+        assistanceLevel (string)<br />
+        uid (string)<br />
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subjectSelection:
+                  type: string
+                  example: "Math"
+                question:
+                  type: string
+                  example: "What is the square root of 25?"
+                sessionId:
+                  type: string
+                  example: "123456789"
+                additionalInstruction:
+                  type: string
+                  example: "Provide step-by-step explanation"
+                assistanceLevel:
+                  type: string
+                  example: "Beginner"
+                uid:
+                  type: string
+                  example: "abc123xyz"
+      responses:
+        "200":
+          description: OK!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      description: "Message type ('outgoing' or 'incoming')"
+                    message:
+                      type: string
+                      description: "Message content"
+                    serial:
+                      type: integer
+                      description: "Message serial number"
+                    sessionId:
+                      type: string
+                      description: "Session ID"
+                    tokenUsage:
+                      type: integer
+                      description: "Token usage for the message"
+                    cost:
+                      type: number
+                      description: "Cost in AI tokens for the message"
+                    title:
+                      type: string
+                      description: "Session title (optional, if serial is less than 3)"
+        "400":
+          description: Invalid request
+        "403":
+          description: Low balance or expired balance
+        "422":
+          description: Session doesn't exist
+
+  /generate/suggestions/{_id}:
+    post:
+      tags:
+        - Generate
+      summary: Generate AI search suggestions based on user message
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      description: |
+        Request:<br /><br />
+        message (string)<br />
+        sessionId (string)<br />
+        uid (string)<br />
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Can you explain Newton's first law of motion?"
+                sessionId:
+                  type: string
+                  example: "123456789"
+                uid:
+                  type: string
+                  example: "abc123xyz"
+      responses:
+        "200":
+          description: OK!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Search suggestions based on the message"
+                  tokenUsage:
+                    type: integer
+                    description: "Token usage for the message"
+                  totalCost:
+                    type: number
+                    description: "Cost in AI tokens for the message"
+                  sessionId:
+                    type: string
+                    description: "Session ID"
+        "400":
+          description: Invalid request
+        "403":
+          description: Low balance or expired balance
+
+  /generate/test:
+    post:
+      tags:
+        - Generate
+      summary: Generate AI response as a stream based on user prompt
+      description: |
+        Request:<br /><br />
+        subjectSelection (string)<br />
+        question (string)<br />
+        sessionId (string)<br />
+        additionalInstruction (string)<br />
+        assistanceLevel (string)<br />
+        uid (string)<br />
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subjectSelection:
+                  type: string
+                  example: "Math"
+                question:
+                  type: string
+                  example: "What is the square root of 25?"
+                sessionId:
+                  type: string
+                  example: "123456789"
+                additionalInstruction:
+                  type: string
+                  example: "Provide step-by-step explanation"
+                assistanceLevel:
+                  type: string
+                  example: "Beginner"
+                uid:
+                  type: string
+                  example: "abc123xyz"
+      responses:
+        "200":
+          description: OK!
+        "400":
+          description: Invalid request
+
+  paths10:
+  /session:
+    post:
+      tags:
+        - Session
+      summary: Generate a new session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateSessionRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad Request
+
+  /session/all:
+    post:
+      tags:
+        - Session
+      summary: Get all sessions for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSessionsRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad Request
+
+  /session/favorite:
+    post:
+      tags:
+        - Session
+      summary: Get favorite sessions for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSessionsRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad Request
+
+  /session/single:
+    post:
+      tags:
+        - Session
+      summary: Get a single session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetSingleSessionRequest"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad Request
+
+  /session/favorite/switch:
+    post:
+      tags:
+        - Session
+      summary: Toggle favorite state of a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleFavoriteStateRequest"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isBookmarked:
+                    type: boolean
+        "404":
+          description: Not Found
+        "400":
+          description: Bad Request
+
+  /session/{id}:
+    delete:
+      tags:
+        - Session
+      summary: Delete a session
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The unique identifier of the session
+          schema:
+            type: string
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: Bad Request
+
+  paths6:
+  /package/create/{_id}:
+    post:
+      tags:
+        - Packages
+      summary: Create a new package
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      description: |
+        Request:<br /><br />
+        plan (string)<br />
+        price (number)<br />
+        validity (string)<br />
+        estimatedGeneration (string)<br />
+        profit (number)<br />
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plan:
+                  type: string
+                  example: "Basic"
+                price:
+                  type: number
+                  example: 9.99
+                validity:
+                  type: number
+                  example: 30
+                estimatedGeneration:
+                  type: number
+                  example: 16000
+                profit:
+                  type: number
+                  example: 5
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: The unique identifier of the package
+                    example: "60eb1b833270d411d9a28f1e"
+                  plan:
+                    type: string
+                    description: The name of the package
+                    example: "Basic"
+                  price:
+                    type: number
+                    description: The price of the package
+                    example: 9.99
+                  validity:
+                    type: string
+                    description: The validity period of the package
+                    example: "30 days"
+                  estimatedGeneration:
+                    type: string
+                    description: The estimated generation time of the package
+                    example: "2-3 weeks"
+        "400":
+          description: Invalid request
+        "422":
+          description: Package already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: The error message
+                    example: "Package already exists"
+                  _id:
+                    type: string
+                    description: The unique identifier of the existing package
+                    example: "60eb1b833270d411d9a28f1e"
+                  packageExists:
+                    type: object
+                    description: The existing package object
+                    properties:
+                      plan:
+                        type: string
+                        description: The name of the package
+                        example: "Basic"
+                      price:
+                        type: number
+                        description: The price of the package
+                        example: 9.99
+                      validity:
+                        type: string
+                        description: The validity period of the package
+                        example: "30 days"
+                      estimatedGeneration:
+                        type: string
+                        description: The estimated generation time of the package
+                        example: "2-3 weeks"
+
+  /package/{_id}:
+    patch:
+      tags:
+        - Packages
+      summary: Update an existing package
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "60eb1b833270d411d9a28f1e"
+                password:
+                  type: string
+                  example: "password123"
+                plan:
+                  type: string
+                  example: "Advanced"
+                price:
+                  type: number
+                  example: 14.99
+                validity:
+                  type: number
+                  example: 60
+                estimatedGeneration:
+                  type: number
+                  example: 17000
+                profit:
+                  type: number
+                  example: 7
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: The unique identifier of the updated package
+                    example: "60eb1b833270d411d9a28f1e"
+                  plan:
+                    type: string
+                    description: The name of the updated package
+                    example: "Advanced"
+                  price:
+                    type: number
+                    description: The price of the updated package
+                    example: 14.99
+                  validity:
+                    type: string
+                    description: The validity period of the updated package
+                    example: "60 days"
+                  estimatedGeneration:
+                    type: string
+                    description: The estimated generation time of the updated package
+                    example: "4-6 weeks"
+        "403":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: The error message
+                    example: "Invalid credentials"
+
+    # /package/{_id}:
+    delete:
+      tags:
+        - Packages
+      summary: Delete a package
+      parameters:
+        - name: _id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "643378688002fac4f0138cbe"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "60eb1b833270d411d9a28f1e"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  n:
+                    type: number
+                    description: The number of packages deleted
+                    example: 1
+                  ok:
+                    type: number
+                    description: The deletion status (1 if successful)
+                    example: 1
+                  deletedCount:
+                    type: number
+                    description: The number of packages deleted (same as 'n')
+                    example: 1
+                  __v:
+                    type: number
+                    description: The version key
+                    example: 0
+
+  /package/all:
+    get:
+      tags:
+        - Packages
+      summary: Get all packages
+      parameters:
+        - name: page
+          in: query
+          # description: The page number for pagination (default: 1)
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          # description: The number of packages to retrieve per page (default: 50)
+          schema:
+            type: integer
+            example: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      description: The unique identifier of the package
+                      example: "60eb1b833270d411d9a28f1e"
+                    plan:
+                      type: string
+                      description: The name of the package
+                      example: "Basic"
+                    price:
+                      type: number
+                      description: The price of the package
+                      example: 9.99
+                    validity:
+                      type: string
+                      description: The validity period of the package
+                      example: "30 days"
+                    estimatedGeneration:
+                      type: string
+                      description: The estimated generation time of the package
+                      example: "2-3 weeks"
+
+  paths7:
+  /ai/all:
+    get:
+      tags:
+        - AI
+      summary: Get all AI configurations
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      description: The unique identifier of the AI configuration
+                      example: "60eb1b833270d411d9a28f1e"
+                    initBalance:
+                      type: number
+                      description: The initial balance of the AI
+                      example: 0.006
+                    initDuration:
+                      type: number
+                      description: The initial duration of the AI (in minutes)
+                      example: 30
+                    outPrice:
+                      type: number
+                      description: The price for AI output (per token)
+                      example: 0.06
+                    inPrice:
+                      type: number
+                      description: The price for AI input (per token)
+                      example: 0.03
+
+  /ai/{id}:
+    patch:
+      tags:
+        - AI
+      summary: Update an AI configuration
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the AI configuration to update
+          required: true
+          schema:
+            type: string
+          example: "60eb1b833270d411d9a28f1e"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "60eb1b833270d411d9a28f1e"
+                password:
+                  type: string
+                  example: "password123"
+                initBalance:
+                  type: number
+                  example: 0.01
+                initDuration:
+                  type: number
+                  example: 60
+                outPrice:
+                  type: number
+                  example: 0.08
+                inPrice:
+                  type: number
+                  example: 0.04
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: The unique identifier of the updated AI configuration
+                    example: "60eb1b833270d411d9a28f1e"
+                  initBalance:
+                    type: number
+                    description: The initial balance of the updated AI
+                    example: 0.01
+                  initDuration:
+                    type: number
+                    description: The initial duration of the updated AI (in minutes)
+                    example: 60
+                  outPrice:
+                    type: number
+                    description: The price for AI output (per token) of the updated AI
+                    example: 0.08
+                  inPrice:
+                    type: number
+                    description: The price for AI input (per token) of the updated AI
+                    example: 0.04
+        "403":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: The error message
+                    example: "Invalid credentials"
+
+  paths8:
+  /payment/create-intent:
+    post:
+      tags:
+        - Payment
+      summary: Create a payment intent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: The unique identifier of the package
+                  example: "60eb1b833270d411d9a28f1e"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientSecret:
+                    type: string
+                    description: The client secret for the payment intent
+
+  /payment/resolve-intent:
+    post:
+      tags:
+        - Payment
+      summary: Resolve a payment intent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  description: The unique identifier of the package
+                  example: "60eb1b833270d411d9a28f1e"
+                paymentID:
+                  type: string
+                  description: The payment ID
+                  example: "pi_1JKf96IqcEXQ4vMn0Q1N7lm8"
+                uid:
+                  type: string
+                  description: The unique identifier of the user
+                  example: "60eb1b833270d411d9a28f1e"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: The unique identifier of the payment
+                    example: "60eb1b833270d411d9a28f1e"
+                  uid:
+                    type: string
+                    description: The unique identifier of the user
+                    example: "60eb1b833270d411d9a28f1e"
+                  packageID:
+                    type: string
+                    description: The unique identifier of the package
+                    example: "60eb1b833270d411d9a28f1e"
+                  paymentID:
+                    type: string
+                    description: The payment ID
+                    example: "pi_1JKf96IqcEXQ4vMn0Q1N7lm8"
+                  plan:
+                    type: string
+                    description: The plan name
+                    example: "Basic Plan"
+                  price:
+                    type: number
+                    description: The price after deduction of charge
+                    example: 9.99
+                  estimatedGeneration:
+                    type: number
+                    description: The estimated generation
+                    example: 100
+                  validity:
+                    type: string
+                    description: The validity of the payment
+                    example: "2023-01-01T00:00:00.000Z"
+                  status:
+                    type: string
+                    description: The status of the payment
+                    example: "Confirmed"
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+
+  paths9:
+  /transaction/all/{id}:
+    post:
+      tags:
+        - Transaction
+      summary: Get all transactions for a user
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the user
+          required: true
+          schema:
+            type: string
+            example: "60eb1b833270d411d9a28f1e"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: "60eb1b833270d411d9a28f1e"
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /transaction/admin/all/{id}:
+    post:
+      tags:
+        - Transaction
+      summary: Get all transactions for an admin
+      parameters:
+        - name: id
+          in: path
+          description: The unique identifier of the admin
+          required: true
+          schema:
+            type: string
+            example: "60eb1b833270d411d9a28f1e"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  example: "60eb1b833270d411d9a28f1e"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+# components:
+
+# bearer token auth added
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Enter your JWT token with the prefix 'Bearer '.
+  schemas:
+    GenerateSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The unique identifier of the session
+          example: "60eb1b833270d411d9a28f1e"
+        sessionTitle:
+          type: string
+          description: The title of the session
+          example: "Math Homework"
+        subjectSelection:
+          type: string
+          description: The subject selection
+          example: "Mathematics"
+        additionalInstruction:
+          type: string
+          description: Additional instructions for the session
+          example: "Please solve questions 1 to 5"
+        assistanceLevel:
+          type: string
+          description: The level of assistance required
+          example: "Advanced"
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+    GetSessionsRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: The page number
+          example: 1
+        limit:
+          type: integer
+          description: The limit of sessions per page
+          example: 10
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+    GetSingleSessionRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The unique identifier of the session
+          example: "60eb1b833270d411d9a28f1e"
+    ToggleFavoriteStateRequest:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: The unique identifier of the session
+          example: "60eb1b833270d411d9a28f1e"
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+    Session:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the session
+          example: "60eb1b833270d411d9a28f1e"
+        sessionId:
+          type: string
+          description: The unique identifier of the session
+          example: "60eb1b833270d411d9a28f1e"
+        sessionTitle:
+          type: string
+          description: The title of the session
+          example: "Math Homework"
+        subjectSelection:
+          type: string
+          description: The subject selection
+          example: "Mathematics"
+        additionalInstruction:
+          type: string
+          description: Additional instructions for the session
+          example: "Please solve questions 1 to 5"
+        assistanceLevel:
+          type: string
+          description: The level of assistance required
+          example: "Advanced"
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+        isBookmarked:
+          type: boolean
+          description: Indicates if the session is bookmarked
+        sessionCost:
+          type: number
+          description: The cost of the session
+    Transaction:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the transaction
+          example: "60eb1b833270d411d9a28f1e"
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+        transactions:
+          type: array
+          description: The array of transactions
+          items:
+            $ref: "#/components/schemas/Payment"
+        currentBalance:
+          type: number
+          description: The current balance
+          example: 10.99
+        validity:
+          type: string
+          format: date-time
+          description: The validity of the transaction
+          example: "2023-01-01T00:00:00.000Z"
+        dailyUsed:
+          type: array
+          description: The array of daily usage
+          items:
+            type: string
+          example: ["2023-01-01", "2023-01-02"]
+    Payment:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the payment
+          example: "60eb1b833270d411d9a28f1e"
+        uid:
+          type: string
+          description: The unique identifier of the user
+          example: "60eb1b833270d411d9a28f1e"
+        packageID:
+          type: string
+          description: The unique identifier of the package
+          example: "60eb1b833270d411d9a28f1e"
+        paymentID:
+          type: string
+          description: The payment ID
+          example: "pi_1JKf96IqcEXQ4vMn0Q1N7lm8"
+        plan:
+          type: string
+          description: The plan name
+          example: "Basic Plan"
+        price:
+          type: number
+          description: The price after deduction of charge
+          example: 9.99
+        estimatedGeneration:
+          type: number
+          description: The estimated generation
+          example: 100
+        validity:
+          type: string
+          format: date-time
+          description: The validity of the payment
+          example: "2023-01-01T00:00:00.000Z"
+        status:
+          type: string
+          description: The status of the payment
+          example: "Confirmed"

@@ -1,0 +1,6 @@
+[build]
+command = "npm install"
+publish = "index.js"
+
+[dev]
+command = "node index.js" # Replace with the command to start your Node.js server locally

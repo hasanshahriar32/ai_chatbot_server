@@ -1,0 +1,33 @@
+[
+  {
+    "_id": "h897dfgyisdfuh4",
+    "session_id": "3245_2345_gvs45",
+    "session_title": "special theory of relativity explanation",
+    "uid": "1234i7tyhfsad",
+    "is_bookmarked": true,
+    "created_at": "2019-09-09 12:00:00",
+    "updated_at": "2019-09-09 12:00:00",
+    "messages": [
+      {
+        "serial": 1,
+        "message": "Hello",
+        "sender": "user"
+      },
+      {
+        "serial": 2,
+        "message": "Hi",
+        "sender": "bot"
+      },
+      {
+        "serial": 3,
+        "message": "How are you?",
+        "sender": "user"
+      },
+      {
+        "serial": 4,
+        "message": "I am fine",
+        "sender": "bot"
+      }
+    ]
+  }
+]
