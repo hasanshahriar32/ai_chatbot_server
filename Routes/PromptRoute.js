@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   generateResponse,
+  fineTune,
   generateSuggestions,
 } = require("../Controllers/PromptController/promptController");
 const {
@@ -17,6 +18,7 @@ const { protect } = require("../MiddleWare/authMiddleWare");
 
 router.post("/test", generateResponse3);
 router.post("/prompt/:id", protect, generateResponse);
+router.post("/finetune/:id", protect, fineTune);
 router.post("/suggestions/:id", protect, generateSuggestions);
 // router.get("/test", generateTest);
 
