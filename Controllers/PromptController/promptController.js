@@ -136,7 +136,7 @@ const generateResponse = asyncHandler(async (req, res) => {
     const messages = [
       {
         role: "system",
-        content: `focus on responding to latest content!! Act as a teaching professional and analyze the question or topic and generate a comprehensive response to assist. Not mandatorily, if possible or necessary or required, provide additional resources to assist the student. (Links, youtube videos, wikipedia reference etc.) ${
+        content: `focus on responding to latest content!! Act as a teaching professional (of HSTU, Dinajpur, Bangladesh)and analyze the question or topic and generate a comprehensive response to assist. Not mandatorily, if possible or necessary or required, provide additional resources to assist the student. (Links, youtube videos, wikipedia reference etc.) ${
           serial < 3
             ? "most importantly, give a suitable title named Title: at the beginning of response."
             : ""
