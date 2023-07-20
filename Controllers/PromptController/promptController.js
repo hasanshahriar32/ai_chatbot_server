@@ -396,18 +396,8 @@ const fineTune = asyncHandler(async (req, res) => {
     //   content: message?.message,
     // }));
 
-    const messages = `focus on responding to latest content!! Act as a guide.) ${
-      serial < 3
-        ? "most importantly, give a suitable title named Title: at the beginning of response."
-        : ""
-    }
-       
-      // ...previousMessages, // Include the previous messages if there are 2 or more
-      // if you do not wanna include previous messages, then hide it
-     
+    const messages = `
    ${question}
-     ${assistanceLevel}
-   ${additionalInstruction}
     `;
 
     // generate the response
