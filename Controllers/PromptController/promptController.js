@@ -382,8 +382,8 @@ const fineTune = asyncHandler(async (req, res) => {
     }
     // rate of the token
     const aiExists = await Ai.find();
-    const aiReadCost = 0.012;
-    const aiWriteCost = 0.012;
+    const aiReadCost = 0.12;
+    const aiWriteCost = 0.12;
 
     // load existing 2 messages to give better response
     // const existingMessages = sessionExists?.messages;
@@ -413,7 +413,7 @@ const fineTune = asyncHandler(async (req, res) => {
     // generate the response
 
     const response = await openai.createCompletion({
-      model: "curie:ft-sj-innovation-2023-07-19-18-47-10",
+      model: "davinci:ft-sj-innovation-2023-07-20-01-12-54",
       prompt: messages,
       max_tokens: 200,
     });
