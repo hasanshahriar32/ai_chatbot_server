@@ -425,7 +425,7 @@ const fineTune = asyncHandler(async (req, res) => {
     await transaction[0].save();
 
     // Extract the title from the response
-    let title = "";
+    let title = "HSTU Helpline Bot 🟢";
     const responseContent = response.data.choices[0]?.text;
     const titleMatch = responseContent.match(/Title: ([^\n]+)/);
     if (titleMatch) {
