@@ -630,8 +630,8 @@ ${message}
   });
 });
 const fineTune = asyncHandler(async (req, res) => {
-  const { message, sessionId, uid } = req.body;
-
+  const { question, sessionId, uid } = req.body;
+  const message = `Question: ${question}`;
   if (!message) {
     res.status(400).json({
       error: "Message is required.",
