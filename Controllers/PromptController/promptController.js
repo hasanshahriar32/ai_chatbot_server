@@ -272,13 +272,14 @@ const generateResponse = asyncHandler(async (req, res) => {
     ]);
   }
 });
-const fineTune = asyncHandler(async (req, res) => {
+const generateAnswer = asyncHandler(async (req, res) => {
   try {
     const userPrompt = req.body;
     const {
       subjectSelection,
       question,
       sessionId,
+      finetune,
       additionalInstruction,
       assistanceLevel,
       uid,
@@ -382,8 +383,8 @@ const fineTune = asyncHandler(async (req, res) => {
     }
     // rate of the token
     const aiExists = await Ai.find();
-    const aiReadCost = 0.12;
-    const aiWriteCost = 0.12;
+    const aiReadCost = aiExists[0].inPrice;
+    const aiWriteCost = aiExists[0].outPrice;
 
     // load existing 2 messages to give better response
     // const existingMessages = sessionExists?.messages;
@@ -396,19 +397,39 @@ const fineTune = asyncHandler(async (req, res) => {
     //   content: message?.message,
     // }));
 
-    const messages = `
-   ${question}
-    `;
+    const messages = [
+      {
+        role: "system",
+        content: `Act as a admission assistant bot of Hajee Mohammad Danesh Science and Technology University, Dinajpur- 5200, Bangladesh. If you have the answer to the problem of the candidate, then provide it. For your assistance, another fine tune model will provide its trained data to you. With your knowledge and the data of this fine tune model, create a meaningful solution and provide it. Note that, the trained data of this fine tune model might not be correct (or be correct). Give priority of your own data and just for assistance, use the data of fine tune model.`,
+      },
+      {
+        role: "assistant",
+        content: `finetune model message starts here
+        ${finetune}
+        `,
+      },
+      {
+        role: "user",
+        content: `
+    Prompt: ${question},
+    Assistance Level: ${assistanceLevel},
+    Additional Details: ${additionalInstruction}, 
+    `,
+      },
+    ];
 
     // generate the response
 
-    const response = await openai.createCompletion({
-      model: "davinci:ft-sj-innovation-2023-07-22-00-14-19",
-      prompt: messages,
-      max_tokens: 200,
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages,
+      max_tokens: 500,
+      temperature: 0.5,
+      presence_penalty: 0,
+      frequency_penalty: 0,
     });
 
-    console.log(response.data.choices[0]?.text, "response");
+    console.log(response.data.choices[0].message.content, "response");
     console.log("Token usage:", response.data.usage);
     const totalCost =
       (response.data.usage.prompt_tokens / 1000) * aiReadCost +
@@ -426,7 +447,7 @@ const fineTune = asyncHandler(async (req, res) => {
 
     // Extract the title from the response
     let title = "HSTU Helpline Bot 🟢";
-    const responseContent = response.data.choices[0]?.text;
+    const responseContent = response.data.choices[0].message.content;
     const titleMatch = responseContent.match(/Title: ([^\n]+)/);
     if (titleMatch) {
       title = titleMatch[1];
@@ -470,7 +491,7 @@ const fineTune = asyncHandler(async (req, res) => {
         $push: {
           messages: {
             type: "incoming",
-            message: response.data.choices[0]?.text,
+            message: response.data.choices[0].message.content,
             serial: serial + 1,
             sessionId: sessionId,
             tokenUsage: response.data.usage.completion_tokens,
@@ -494,7 +515,7 @@ const fineTune = asyncHandler(async (req, res) => {
       },
       {
         type: "incoming",
-        message: response.data.choices[0]?.text,
+        message: response.data.choices[0].message.content,
         serial: serial + 1,
         sessionId: sessionId,
         tokenUsage: response.data.usage.completion_tokens,
@@ -608,9 +629,111 @@ ${message}
     sessionId,
   });
 });
+const fineTune = asyncHandler(async (req, res) => {
+  const { message, sessionId, uid } = req.body;
+
+  if (!message) {
+    res.status(400).json({
+      error: "Message is required.",
+    });
+    return;
+  }
+
+  const transaction = await Transaction.find({ uid }).select(
+    "-dailyUsed -transactions"
+  );
+  const currentBalance = transaction[0]?.currentBalance;
+  const validity = transaction[0]?.validity;
+  if (currentBalance < 0.06 || !currentBalance) {
+    res.status(200).json({
+      message: "How to upgrade plan?\n",
+      sessionId,
+      tokenUsage: 0,
+      totalCost: 0,
+    });
+    return;
+  }
+  if (currentBalance > 0.06) {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // Set today's time to 00:00:00 UTC
+
+    const newValidity = new Date(today.getTime());
+    if (newValidity.getTime() > validity) {
+      res.status(200).json({
+        message: "How to update validity?\n",
+        sessionId,
+        tokenUsage: 0,
+        totalCost: 0,
+      });
+      return;
+    }
+  }
+
+  // const formattedMessage = message.replace(/\n/g, "");
+
+  //   const response = await openai.createChatCompletion({
+  //     model: "gpt-3.5-turbo",
+  //     messages: [
+  //       {
+  //         role: "system",
+  //         content: `Give some search suggestions based on the message in 5 lines. each line should be separated by a new line. and each line should be within 30 characters.`,
+  //       },
+  //       {
+  //         role: "user",
+  //         content: `
+  // ---------------message starts here---------------
+  // ${message}
+  // ---------------message ends here---------------`,
+  //       },
+  //     ],
+  //     max_tokens: 200,
+  //     temperature: 0.5,
+  //     presence_penalty: 0,
+  //     frequency_penalty: 0,
+  //   });
+  const response = await openai.createCompletion({
+    model: "davinci:ft-sj-innovation-2023-07-22-00-14-19",
+    prompt: message,
+    max_tokens: 200,
+  });
+
+  console.log(response.data.choices[0]?.text, "response");
+  console.log("Token usage:", response.data.usage);
+
+  console.log(response.data.choices[0]?.text, "response");
+  console.log("Token usage:", response.data.usage);
+
+  // rate of the token
+  const aiExists = await Ai.find();
+  const aiReadCost = 0.12;
+  const aiWriteCost = 0.12;
+
+  const totalCost =
+    (response.data.usage.prompt_tokens / 1000) * aiReadCost +
+    (response.data.usage.completion_tokens / 1000) * aiWriteCost;
+  console.log("Total Cost: " + " " + totalCost);
+
+  // sessionExists.sessionCost;
+  // update value of sessionCost
+  // code here for daily cost
+  const sessionExists = await Session.findOne({ sessionId });
+  sessionExists.sessionCost += totalCost;
+  await sessionExists.save();
+
+  transaction[0].currentBalance -= totalCost;
+  await transaction[0].save();
+
+  res.status(200).json({
+    message: response.data.choices[0]?.text,
+    tokenUsage: response.data.usage.completion_tokens,
+    totalCost,
+    sessionId,
+  });
+});
 
 module.exports = {
   generateResponse,
   generateSuggestions,
   fineTune,
+  generateAnswer,
 };

@@ -5,6 +5,7 @@ const {
   generateResponse,
   fineTune,
   generateSuggestions,
+  generateAnswer,
 } = require("../Controllers/PromptController/promptController");
 const {
   generateResponse3,
@@ -19,6 +20,7 @@ const { protect } = require("../MiddleWare/authMiddleWare");
 router.post("/test", generateResponse3);
 router.post("/prompt/:id", protect, generateResponse);
 router.post("/finetune/:id", protect, fineTune);
+router.post("/admission/:id", protect, generateAnswer);
 router.post("/suggestions/:id", protect, generateSuggestions);
 // router.get("/test", generateTest);
 
