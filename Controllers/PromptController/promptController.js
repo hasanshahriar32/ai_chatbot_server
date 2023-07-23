@@ -696,7 +696,7 @@ const fineTune = asyncHandler(async (req, res) => {
     prompt: `${message} ->`,
     max_tokens: 300,
     // end response
-    stop: ["\n"],
+    // stop: ["\n"],
   });
 
   console.log(response.data.choices[0]?.text, "response");
