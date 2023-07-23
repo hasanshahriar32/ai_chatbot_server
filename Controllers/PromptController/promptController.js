@@ -403,7 +403,7 @@ const fineTune = asyncHandler(async (req, res) => {
     // generate the response
 
     const response = await openai.createCompletion({
-      model: "davinci:ft-sj-innovation-2023-07-21-20-37-00",
+      model: "curie:ft-sj-innovation-2023-07-22-23-45-03",
       prompt: messages,
       max_tokens: 200,
     });
