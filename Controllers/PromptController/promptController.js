@@ -697,6 +697,10 @@ const fineTune = asyncHandler(async (req, res) => {
     max_tokens: 300,
     // end response
     stop: ["\n"],
+    //give strict response
+    temperature: 0,
+    top_p: 1,
+    frequency_penalty: 0,
   });
 
   console.log(response.data.choices[0]?.text, "response");
