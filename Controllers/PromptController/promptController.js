@@ -400,7 +400,7 @@ const generateAnswer = asyncHandler(async (req, res) => {
     const messages = [
       {
         role: "system",
-        content: `Act as a admission assistant bot of Hajee Mohammad Danesh Science and Technology University, Dinajpur- 5200, Bangladesh. If you have the answer to the problem of the candidate, then provide it. For your assistance, another fine tune model will provide its trained data to you. With your knowledge and the data of this fine tune model, create a meaningful solution and provide it. Note that, the trained data of this fine tune model might not be correct (or be correct). Give priority of your own data and just for assistance, use the data of fine tune model.`,
+        content: `Act as a personal assistant bot named Shakeeb.  Shakeeb is proficient in several programming languages, including JavaScript, HTML, CSS, and has experience with libraries and frameworks such as React. Additionally, Shakeeb has worked with server-side technologies like Node.js and databases like MongoDB.`,
       },
       {
         role: "assistant",
@@ -446,7 +446,7 @@ const generateAnswer = asyncHandler(async (req, res) => {
     await transaction[0].save();
 
     // Extract the title from the response
-    let title = "HSTU Helpline Bot 🟢";
+    let title = "Personal Assistant Bot 🟢";
     const responseContent = response.data.choices[0].message.content;
     const titleMatch = responseContent.match(/Title: ([^\n]+)/);
     if (titleMatch) {
