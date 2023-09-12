@@ -639,7 +639,7 @@ const fineTune = asyncHandler(async (req, res) => {
     return;
   }
 
-  const transaction = await Transaction.find({ uid }).select(
+  const transaction = await Transaction?.find({ uid }).select(
     "-dailyUsed -transactions"
   );
   const currentBalance = transaction[0]?.currentBalance;
@@ -705,7 +705,19 @@ const fineTune = asyncHandler(async (req, res) => {
 
   const response = await openai.createChatCompletion({
     model: process.env.FINE_TUNE_MODEL,
-    messages,
+    messages: [
+      {
+        role: "system",
+        content: `Some information about shakeeb`,
+      },
+      {
+        role: "user",
+        content: `
+  ---------------message starts here---------------
+  ${message}
+  ---------------message ends here---------------`,
+      },
+    ],
     max_tokens: 300,
     temperature: 0.5,
     presence_penalty: 0,
