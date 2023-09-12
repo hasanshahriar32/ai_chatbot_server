@@ -691,28 +691,36 @@ const fineTune = asyncHandler(async (req, res) => {
   //     presence_penalty: 0,
   //     frequency_penalty: 0,
   //   });
-  const response = await openai.createCompletion({
-    model: "davinci:ft-sj-innovation-2023-07-29-07-13-53",
-    prompt: `${message} ->`,
+  // const response = await openai.createCompletion({
+  //   model: "davinci:ft-sj-innovation-2023-07-29-07-13-53",
+  //   prompt: `${message} ->`,
+  //   max_tokens: 300,
+  //   // end response
+  //   stop: ["\n"],
+  //   //give strict response
+  //   temperature: 0,
+  //   top_p: 1,
+  //   frequency_penalty: 0,
+  // });
+
+  const response = await openai.createChatCompletion({
+    model: process.env.FINE_TUNE_MODEL,
+    messages,
     max_tokens: 300,
-    // end response
-    stop: ["\n"],
-    //give strict response
-    temperature: 0,
-    top_p: 1,
+    temperature: 0.5,
+    presence_penalty: 0,
     frequency_penalty: 0,
   });
-
-  console.log(response.data.choices[0]?.text, "response");
+  console.log(response.data?.choices[0]?.message?.content, "response");
   console.log("Token usage:", response.data.usage);
 
-  console.log(response.data.choices[0]?.text, "response");
+  console.log(response.data?.choices[0]?.message?.content, "response");
   console.log("Token usage:", response.data.usage);
 
   // rate of the token
   const aiExists = await Ai.find();
-  const aiReadCost = 0.12;
-  const aiWriteCost = 0.12;
+  const aiReadCost = 0.012;
+  const aiWriteCost = 0.016;
 
   const totalCost =
     (response.data.usage.prompt_tokens / 1000) * aiReadCost +
@@ -730,7 +738,7 @@ const fineTune = asyncHandler(async (req, res) => {
   await transaction[0].save();
 
   res.status(200).json({
-    message: response.data.choices[0]?.text,
+    message: response.data?.choices[0]?.message?.content,
     tokenUsage: response.data.usage.completion_tokens,
     totalCost,
     sessionId,
